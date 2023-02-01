@@ -2,26 +2,56 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+ 
+
+function unixToUtc(unixTimestamp) {
+    return new Date(unixTimestamp*1).toUTCString();
+  }
 app.get('/api/:id', function(req, res) {
-    // res.send('id: ' + req.params.id);
-    let val=req.params.id;
+   let val=req.params.id;
+   console.log(val)
+   let second=new Date(val)
+   console.log(second)
+   if(second!='Invalid Date')
+   {
+    let unis=parseInt((new Date(val).getTime()))
+
+    let satis=unixToUtc(unis)
+    if(satis!='Invalid Date'){
+        res.json({"unix":unis,"utc":satis})
+    }else{
+        res.json({'error':'Invalid Date'})
+    }
+   }
+   else{
     
-        let ans= new Date(parseInt(val)).toUTCString();
-        res.json({'unix':val,'utc':ans})
-      });
+    let satis=unixToUtc(val)
+    console.log(satis)
+    if(satis!='Invalid Date'){
+        res.json({"unix":val,"utc":satis})
+    }else{
+        res.json({'error':'Invalid Date'})
+    }
+
+   }
+
+ 
+});
+app.get('/api', (req, res) => {
+    let val=new Date();
+    let unis=parseInt((new Date(val).getTime()))
+
+    let satis=unixToUtc(unis)
+    if(satis!='Invalid Date'){
+        res.json({"unix":unis,"utc":satis})
+    }else{
+        res.json({'error':'Invalid Date'})
+    }
 
 
-app.get('/api', function(req, res) {
-    const today=new Date();
-    
-   
-        let deb=parseInt((new Date(today).getTime() ).toFixed(0))
-        let ans= new Date(parseInt(deb)).toUTCString();
-        res.json({'unix':deb,'utc':ans})
-      });
+  });
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
